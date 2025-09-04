@@ -63,7 +63,7 @@ Recomendado solo para desarrollo; para producción, revisa las versiones compati
 Crea un archivo `.env` en el directorio raíz y agrega las siguientes variables:
 
 ```env
-VITE_API_URL=http://localhost:8000/api
+VITE_BASE_URL=http://localhost:8000/api
 VITE_APP_NAME="Favoritos de Usuario"
 VITE_APP_ENV=development
 VITE_AUTH_TOKEN_KEY=token

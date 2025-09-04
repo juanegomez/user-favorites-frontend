@@ -20,7 +20,7 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: process.env.VITE_API_URL,
+        target: process.env.VITE_BASE_URL,
         changeOrigin: true,
         secure: false,
         configure: (proxy, _options) => {
@@ -68,9 +68,5 @@ export default defineConfig({
         }
       }
     }
-  },
-  // Configure environment variables
-  define: {
-    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'http://localhost:8000/api')
   }
 })
