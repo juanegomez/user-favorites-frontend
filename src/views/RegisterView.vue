@@ -91,14 +91,14 @@
 
       <!-- Enlaces adicionales -->
       <div class="extra-links">
-        <router-link to="/login" class="link">¿Ya tienes cuenta? Inicia sesión</router-link>
+        <router-link to="/" class="link">¿Ya tienes cuenta? Inicia sesión</router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/config/axios';
 
 export default {
   name: 'RegisterView',
@@ -116,73 +116,67 @@ export default {
         password: '',
         password_confirmation: ''
       },
-      loading: false,
       error: '',
       showPassword: false,
-      showConfirmPassword: false
+      showConfirmPassword: false,
+      loading: false
     };
   },
   methods: {
     validateName() {
-      if (!this.formData.name) {
+      if (!this.formData.name.trim()) {
         this.errors.name = 'El nombre es obligatorio';
         return false;
       }
-      if (this.formData.name.length > 255) {
-        this.errors.name = 'El nombre no debe exceder 255 caracteres';
+      if (this.formData.name.length < 3) {
+        this.errors.name = 'El nombre debe tener al menos 3 caracteres';
         return false;
       }
-      this.errors.name = '';
       return true;
     },
+    
     validateEmail() {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!this.formData.email) {
-        this.errors.email = 'El correo electrónico es obligatorio';
+        this.errors.email = 'El correo es obligatorio';
         return false;
       }
       if (!emailRegex.test(this.formData.email)) {
-        this.errors.email = 'Ingrese un correo electrónico válido';
+        this.errors.email = 'Ingresa un correo válido';
         return false;
       }
-      if (this.formData.email.length > 255) {
-        this.errors.email = 'El correo no debe exceder 255 caracteres';
-        return false;
-      }
-      this.errors.email = '';
       return true;
     },
+    
     validatePassword() {
-      const hasUpperCase = /[A-Z]/.test(this.formData.password);
-      const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(this.formData.password);
-      
-      if (!this.formData.password) {
+      const password = this.formData.password;
+      if (!password) {
         this.errors.password = 'La contraseña es obligatoria';
         return false;
       }
-      if (this.formData.password.length < 8) {
+      if (password.length < 8) {
         this.errors.password = 'La contraseña debe tener al menos 8 caracteres';
         return false;
       }
-      if (!hasUpperCase) {
-        this.errors.password = 'La contraseña debe contener al menos una letra mayúscula';
+      if (!/[A-Z]/.test(password)) {
+        this.errors.password = 'La contraseña debe contener al menos una mayúscula';
         return false;
       }
-      if (!hasSpecialChar) {
-        this.errors.password = 'La contraseña debe contener al menos un carácter especial';
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        this.errors.password = 'La contraseña debe contener al menos un símbolo';
         return false;
       }
-      this.errors.password = '';
       return true;
     },
+    
     validateConfirmPassword() {
       if (this.formData.password !== this.formData.password_confirmation) {
         this.errors.password_confirmation = 'Las contraseñas no coinciden';
         return false;
       }
-      this.errors.password_confirmation = '';
       return true;
     },
+    
     validateForm() {
       const isNameValid = this.validateName();
       const isEmailValid = this.validateEmail();
@@ -191,32 +185,36 @@ export default {
       
       return isNameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid;
     },
+    
     togglePassword() {
       this.showPassword = !this.showPassword;
     },
+    
     toggleConfirmPassword() {
       this.showConfirmPassword = !this.showConfirmPassword;
     },
+    
     async handleRegister() {
-      if (!this.validateForm()) {
-        return;
-      }
-
+      if (!this.validateForm()) return;
+      
       this.loading = true;
       this.error = '';
-
+      
       try {
-        const response = await axios.post('/api/register', this.formData);
+        const response = await api.post('/register', this.formData);
         
-        // Redirigir al login después de registro exitoso
-        this.$router.push({ 
-          name: 'login',
-          query: { registered: 'true' }
-        });
-        
+        if (response.data.status) {
+          // Registro exitoso, redirigir a login con mensaje
+          this.$router.push({
+            path: '/',
+            query: { registered: 'true' }
+          });
+        } else {
+          this.error = response.data.message || 'Error en el registro';
+        }
       } catch (error) {
         console.error('Error en el registro:', error);
-        this.error = error.response?.data?.message || 'Error en el registro. Por favor, inténtalo de nuevo.';
+        this.error = error.response?.data?.message || 'Error al conectar con el servidor';
       } finally {
         this.loading = false;
       }
@@ -226,196 +224,226 @@ export default {
 </script>
 
 <style scoped>
+/* Estilos base del contenedor */
 .home {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   background: linear-gradient(135deg, #00b5cc, #00ff9f);
   font-family: 'Arial', sans-serif;
   padding: 20px;
 }
 
+/* Tarjeta de registro */
 .login-card {
   background: #2c2c2c;
-  padding: 2rem;
+  padding: 2.5rem 2rem;
   border-radius: 15px;
-  box-shadow: 0px 8px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
   text-align: center;
-  color: white;
+  animation: fadeIn 0.5s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Logo */
 .logo {
-  max-width: 200px;
+  width: 200px;
   margin-bottom: 1.5rem;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.2));
 }
 
+/* Título */
 .title {
-  color: #42b983;
+  color: #fff;
   margin-bottom: 2rem;
   font-size: 1.8rem;
+  font-weight: 600;
 }
 
+/* Formulario */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+/* Grupos de entrada */
 .input-group {
   position: relative;
-  margin-bottom: 0.2rem;
-  text-align: left;
-  padding-bottom: 1.1rem; /* Space for error message */
+  width: 100%;
+  margin-bottom: 0.25rem;
 }
 
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #fff;
-  font-weight: 500;
-  text-align: left;
-}
-
+/* Campos de entrada */
 .input {
   width: 100%;
-  padding: 0.8rem 3rem 0.8rem 1rem;
-  border: 2px solid #444;
+  padding: 0.9rem 1rem;
+  border: 2px solid #3d3d3d;
   border-radius: 8px;
-  background: #3a3a3a;
-  color: white;
-  font-size: 1rem;
+  background: #1e1e1e;
+  color: #fff;
+  font-size: 0.95rem;
   transition: all 0.3s ease;
   box-sizing: border-box;
-  height: 45px;
+  height: 48px;
 }
 
 .input:focus {
   outline: none;
-  border-color: #42b983;
-  box-shadow: 0 0 0 3px rgba(66, 185, 131, 0.3);
-}
-
-.toggle-password {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 45px;
-  width: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #888;
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-size: 1rem;
-  z-index: 2;
-  padding: 0;
-  margin: 0;
-}
-
-.btn {
-  width: 100%;
-  padding: 0.8rem;
-  background: #42b983;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  margin-top: 1rem;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn:hover {
-  background: #3aa876;
-}
-
-.extra-links {
-  margin-top: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.link {
-  color: #42b983;
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.2s;
-}
-
-.link:hover {
-  color: #3aa876;
-  text-decoration: underline;
-}
-
-/* Error message for individual fields */
-.error-message {
-  position: absolute;
-  bottom: 0.1rem;
-  left: 0;
-  color: #ff6b6b;
-  font-size: 0.7rem;
-  text-align: left;
-  width: 100%;
-  padding: 0.1rem 0 0 0;
-  line-height: 1.2;
-}
-
-/* Main form error message */
-.form-error-message {
-  background-color: rgba(255, 107, 107, 0.1);
-  color: #ff6b6b;
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
-  margin: 1rem 0;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border-left: 4px solid #ff6b6b;
-}
-
-.form-error-message i {
-  font-size: 1.1rem;
+  border-color: #42b4ca;
+  box-shadow: 0 0 0 3px rgba(66, 180, 202, 0.2);
 }
 
 .input-error {
   border-color: #ff6b6b !important;
-  background: rgba(231, 76, 60, 0.1) !important;
 }
 
-.input:focus.input-error {
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2) !important;
+/* Botón de mostrar/ocultar contraseña */
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  background: transparent;
+  border: none;
+  padding: 0 8px;
 }
 
+.toggle-password:hover {
+  color: #42b4ca;
+}
+
+/* Mensajes de error */
+.error-message {
+  color: #ff6b6b;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+  text-align: left;
+  min-height: 1.2rem;
+}
+
+/* Botón de registro */
+.btn {
+  background: #42b4ca;
+  color: white;
+  border: none;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 48px;
+}
+
+.btn:hover:not(:disabled) {
+  background: #3694a8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Spinner de carga */
 .spinner {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  border-top-color: white;
-  animation: spin 1s ease-in-out infinite;
-  margin-right: 8px;
+  border-top-color: #fff;
+  animation: spin 0.8s ease-in-out infinite;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-/* Responsive adjustments */
+/* Mensaje de error general */
+.form-error-message {
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+/* Enlaces adicionales */
+.extra-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.link {
+  color: #42b4ca;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.link:hover {
+  color: #3694a8;
+  text-decoration: underline;
+}
+
+/* Diseño responsivo */
 @media (max-width: 480px) {
   .login-card {
-    width: 100%;
-    margin: 0 1rem;
+    padding: 1.5rem;
+  }
+  
+  .logo {
+    width: 160px;
   }
   
   .title {
     font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .input, .btn {
+    padding: 0.7rem 1rem;
   }
 }
 </style>

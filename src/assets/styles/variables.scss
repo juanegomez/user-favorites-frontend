@@ -1,0 +1,181 @@
+// Colors
+$primary: #42b4ca;
+$primary-dark: #3694a8;
+$danger: #dc3545;
+$danger-dark: #c82333;
+$success: #28a745;
+$warning: #ffc107;
+$info: #17a2b8;
+$light: #f8f9fa;
+$dark: #343a40;
+$secondary: #6c757d;
+
+// Background colors
+$bg-dark: #0D0D0D;
+$bg-light: #1e1e1e;
+$bg-lighter: #2c2c2c;
+
+// Text colors
+$text-primary: #ffffff;
+$text-secondary: #dddddd;
+$text-muted: #6c757d;
+
+// Borders
+$border-color: #444444;
+$border-radius: 6px;
+$border-radius-sm: 4px;
+$border-radius-lg: 8px;
+
+// Spacing
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,
+  2: $spacer * 0.5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 3,
+);
+
+// Transitions
+$transition-base: all 0.2s ease-in-out;
+$transition-fade: opacity 0.15s linear;
+
+// Box shadow
+$box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+$box-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+$box-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+
+// Z-index
+$zindex-dropdown: 1000;
+$zindex-sticky: 1020;
+$zindex-fixed: 1030;
+$zindex-modal-backdrop: 1040;
+$zindex-modal: 1050;
+$zindex-popover: 1060;
+$zindex-tooltip: 1070;
+
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+$breakpoint-xxl: 1400px;
+
+// Container max widths
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1320px
+);
+
+// Grid columns
+$grid-columns: 12;
+$grid-gutter-width: 1.5rem;
+
+// Typography
+$font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+$font-family-base: $font-family-sans-serif;
+
+$font-size-base: 1rem;
+$font-size-lg: $font-size-base * 1.25;
+$font-size-sm: $font-size-base * 0.875;
+
+$line-height-base: 1.5;
+$line-height-lg: 1.5;
+$line-height-sm: 1.5;
+
+$h1-font-size: $font-size-base * 2.5;
+$h2-font-size: $font-size-base * 2;
+$h3-font-size: $font-size-base * 1.75;
+$h4-font-size: $font-size-base * 1.5;
+$h5-font-size: $font-size-base * 1.25;
+$h6-font-size: $font-size-base;
+
+// Buttons
+$btn-padding-y: 0.5rem;
+$btn-padding-x: 1rem;
+$btn-font-family: $font-family-base;
+$btn-font-size: $font-size-base;
+$btn-line-height: $line-height-base;
+$btn-border-radius: $border-radius;
+$btn-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+// Forms
+$input-padding-y: 0.5rem;
+$input-padding-x: 0.75rem;
+$input-font-family: $font-family-base;
+$input-font-size: $font-size-base;
+$input-line-height: $line-height-base;
+$input-bg: $bg-light;
+$input-color: $text-primary;
+$input-border-color: $border-color;
+$input-border-radius: $border-radius;
+$input-focus-border-color: $primary;
+$input-focus-box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);
+
+// Cards
+$card-spacer-y: 1.25rem;
+$card-spacer-x: 1.25rem;
+$card-bg: $bg-lighter;
+$card-border-color: $border-color;
+$card-border-radius: $border-radius;
+$card-box-shadow: $box-shadow-sm;
+
+// Modal
+$modal-content-bg: $bg-lighter;
+$modal-content-border-color: $border-color;
+$modal-content-border-radius: $border-radius-lg;
+$modal-backdrop-bg: #000;
+$modal-backdrop-opacity: 0.7;
+$modal-header-border-color: $border-color;
+$modal-footer-border-color: $border-color;
+
+// Navbar
+$navbar-padding-y: 1rem;
+$navbar-padding-x: 1rem;
+$navbar-bg: $bg-lighter;
+$navbar-color: $text-primary;
+$navbar-hover-color: $primary;
+$navbar-active-color: $primary;
+
+// Animation
+$animation-duration: 0.3s;
+$animation-timing-function: ease;
+
+// Custom variables
+:root {
+  --primary: #{$primary};
+  --primary-dark: #{$primary-dark};
+  --danger: #{$danger};
+  --danger-dark: #{$danger-dark};
+  --success: #{$success};
+  --warning: #{$warning};
+  --info: #{$info};
+  --light: #{$light};
+  --dark: #{$dark};
+  --secondary: #{$secondary};
+  
+  --bg-dark: #{$bg-dark};
+  --bg-light: #{$bg-light};
+  --bg-lighter: #{$bg-lighter};
+  
+  --text-primary: #{$text-primary};
+  --text-secondary: #{$text-secondary};
+  --text-muted: #{$text-muted};
+  
+  --border-color: #{$border-color};
+  --border-radius: #{$border-radius};
+  --border-radius-sm: #{$border-radius-sm};
+  --border-radius-lg: #{$border-radius-lg};
+  
+  --box-shadow: #{$box-shadow};
+  --box-shadow-sm: #{$box-shadow-sm};
+  --box-shadow-lg: #{$box-shadow-lg};
+  
+  --animation-duration: #{$animation-duration};
+  --animation-timing-function: #{$animation-timing-function};
+}

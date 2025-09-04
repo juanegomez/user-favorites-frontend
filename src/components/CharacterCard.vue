@@ -48,8 +48,11 @@ export default {
     }
   },
   watch: {
-    isFavorite(newVal) {
-      this.isFavoriteLocal = newVal
+    isFavorite: {
+      immediate: true, // Para asegurar que se ejecute al montar el componente
+      handler(newVal) {
+        this.isFavoriteLocal = newVal;
+      }
     }
   },
   methods: {
@@ -67,7 +70,6 @@ export default {
 }
 </script>
 
-<!-- Estilos de la card intactos -->
 <style scoped>
 .character-card {
   background: #2c2c2c;
@@ -78,6 +80,7 @@ export default {
   text-align: center;
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
   transition: transform 0.2s ease;
+  margin: 10px;
 }
 
 .character-card:hover {
@@ -88,28 +91,37 @@ export default {
   width: 100%;
   border-radius: 8px;
   margin-bottom: 10px;
+  height: 200px;
+  object-fit: cover;
 }
 
 .character-name {
   font-size: 16px;
   margin: 5px 0;
   font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .character-species {
   font-size: 14px;
-  color: #bbb;
-  margin-bottom: 12px;
+  color: #aaa;
+  margin: 5px 0 10px;
 }
 
 .favorite-button {
-  background: transparent;
+  background: none;
   border: none;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
-.favorite-button:hover {
-  transform: scale(1.15);
+.favorite-button:focus {
+  outline: none;
 }
 </style>

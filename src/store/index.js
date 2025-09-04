@@ -1,10 +1,10 @@
 import { createStore } from 'vuex'
-import axios from 'axios';
+import api from '@/config/axios';
 
 export default createStore({
   state: {
-    token: null,
-    name: null
+    token: localStorage.getItem('token') || null,
+    name: localStorage.getItem('name') || null
   },
   getters: {
     isLoggedIn: state => !!state.token,
@@ -21,11 +21,7 @@ export default createStore({
   actions: {
     async login({ commit }, credentials) {
       try {
-        const response = await axios.post(`/api/login`, credentials, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
+        const response = await api.post('/login', credentials)
         
         const data = response.data
     
@@ -49,37 +45,34 @@ export default createStore({
           }
         }
       } catch (error) {
-        console.error('Error al iniciar sesión:', error)
+        console.error('Error en login:', error)
         return {
           status: false,
-          message: 'Error al iniciar sesión'
+          message: error.response?.data?.message || 'Error al conectar con el servidor'
         }
       }
     },
+    
     getToken({ commit }) {
-      if (localStorage.getItem('token')) {
-        commit('setToken', localStorage.getItem('token'))
-      }else{
-        commit('setToken', null)
+      const token = localStorage.getItem('token')
+      const name = localStorage.getItem('name')
+      if (token) {
+        commit('setToken', token)
+        commit('setName', name)
       }
     },
-    async logout({ commit, dispatch }) {
+    
+    async logout({ commit }) {
       try {
-        await axios.post(`/api/logout`, {}, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        })
-
-        commit('setToken', null)
-        localStorage.removeItem('token')
-        localStorage.removeItem('name')
-        
+        // Llamar al endpoint de logout del backend
+        await api.post('/logout')
         window.location.href = '/'
       } catch (error) {
-        console.error('Error al cerrar sesión:', error)
+        console.error('Error en logout:', error)
+      } finally {
+        // Limpiar el store y localStorage
         commit('setToken', null)
+        commit('setName', null)
         localStorage.removeItem('token')
         localStorage.removeItem('name')
         window.location.href = '/'
