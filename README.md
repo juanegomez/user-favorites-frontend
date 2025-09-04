@@ -47,12 +47,23 @@ npm install
 yarn
 ```
 
+## Solución a error de dependencias con npm install
+
+Si al ejecutar `npm install` aparece un error relacionado con dependencias (por ejemplo, `ERESOLVE unable to resolve dependency tree`), puedes instalar las dependencias usando el siguiente comando:
+
+```bash
+npm install --legacy-peer-deps
+```
+
+Esto permite ignorar los conflictos de dependencias y continuar con la instalación.  
+Recomendado solo para desarrollo; para producción, revisa las versiones compatibles de tus dependencias.
+
 ### 3. Configura las variables de entorno
 
 Crea un archivo `.env` en el directorio raíz y agrega las siguientes variables:
 
 ```env
-VITE_API_URL=http://localhost:8000
+VITE_API_URL=http://localhost:8000/api
 VITE_APP_NAME="Favoritos de Usuario"
 VITE_APP_ENV=development
 VITE_AUTH_TOKEN_KEY=token

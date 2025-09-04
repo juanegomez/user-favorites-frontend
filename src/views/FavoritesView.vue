@@ -262,12 +262,12 @@ export default {
       
       try {
         // Usamos la instancia de api configurada que ya incluye los headers necesarios
-        const response = await api({
+        await api({
           method: 'delete',
           url: `/favorite/${this.selectedFavorite.id}`,
           data: { api_id: this.selectedFavorite.id }
         });
-        console.log('Respuesta de eliminación:', response.data);
+
         // Update UI without reloading all data
         this.favorites = this.favorites.filter(fav => fav.id !== this.selectedFavorite.id);
         this.totalItems--;

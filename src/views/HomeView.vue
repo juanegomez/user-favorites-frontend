@@ -28,8 +28,8 @@
 
     <!-- Pagination -->
     <div class="pagination">
-      <button 
-        @click="getPublicApiData(page - 1)" 
+      <button
+        @click="getPublicApiData(page - 1)"
         :disabled="page <= 1"
         class="pagination-button"
       >
@@ -38,18 +38,20 @@
 
       <div class="page-input">
         <span>Página</span>
-        <input 
-          type="number" 
+        <input
+          type="number"
           v-model.number="inputPage"
           @change="goToPage"
           min="1"
           :max="totalPages"
         />
-        <span>de <strong>{{ totalPages }}</strong></span>
+        <span
+          >de <strong>{{ totalPages }}</strong></span
+        >
       </div>
 
-      <button 
-        @click="getPublicApiData(page + 1)" 
+      <button
+        @click="getPublicApiData(page + 1)"
         :disabled="page >= totalPages"
         class="pagination-button"
       >
@@ -61,22 +63,28 @@
   <!-- Confirmation Modal -->
   <div v-if="showConfirmationModal" class="modal-overlay">
     <div class="modal">
-      <div class="modal-icon" :class="{ 'delete': isFavorite, 'add': !isFavorite }">
+      <div class="modal-icon" :class="{ delete: isFavorite, add: !isFavorite }">
         <i :class="isFavorite ? 'fas fa-trash-alt' : 'fas fa-heart'"></i>
       </div>
-      <h3>{{ isFavorite ? 'Eliminar de favoritos' : 'Agregar a favoritos' }}</h3>
-      <p>¿Estás seguro que deseas {{ isFavorite ? 'eliminar a' : 'agregar a' }} <strong>{{ selectedFavorite.name }}</strong> {{ isFavorite ? 'de' : 'a' }} tus favoritos?</p>
+      <h3>
+        {{ isFavorite ? "Eliminar de favoritos" : "Agregar a favoritos" }}
+      </h3>
+      <p>
+        ¿Estás seguro que deseas {{ isFavorite ? "eliminar a" : "agregar a" }}
+        <strong>{{ selectedFavorite.name }}</strong>
+        {{ isFavorite ? "de" : "a" }} tus favoritos?
+      </p>
       <div class="modal-actions">
         <button @click="cancelAddFavorite" class="btn btn-cancel">
           <i class="fas fa-times"></i> Cancelar
         </button>
-        <button 
-          @click="isFavorite ? deleteFavorite() : addFavorite()" 
-          class="btn" 
+        <button
+          @click="isFavorite ? deleteFavorite() : addFavorite()"
+          class="btn"
           :class="{ 'btn-delete': isFavorite, 'btn-add': !isFavorite }"
         >
           <i :class="isFavorite ? 'fas fa-trash-alt' : 'fas fa-heart'"></i>
-          {{ isFavorite ? 'Eliminar' : 'Agregar' }}
+          {{ isFavorite ? "Eliminar" : "Agregar" }}
         </button>
       </div>
     </div>
@@ -84,17 +92,17 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import api from '@/config/axios';
-import axios from 'axios';
-import AppNavbar from '@/components/AppNavbar.vue';
-import CharacterCard from '@/components/CharacterCard.vue';
+import { mapState } from "vuex";
+import api from "@/config/axios";
+import axios from "axios";
+import AppNavbar from "@/components/AppNavbar.vue";
+import CharacterCard from "@/components/CharacterCard.vue";
 
 export default {
-  name: 'HomeView',
+  name: "HomeView",
   components: {
     AppNavbar,
-    CharacterCard
+    CharacterCard,
   },
   data() {
     return {
@@ -107,52 +115,57 @@ export default {
       showConfirmationModal: false,
       selectedFavorite: {
         api_id: null,
-        name: '',
-        image: '',
-        description: '',
+        name: "",
+        image: "",
+        description: "",
       },
-      isFavorite: false
+      isFavorite: false,
     };
   },
   computed: {
-    ...mapState(['token'])
+    ...mapState(["token"]),
   },
   methods: {
     async loadFavoriteIds() {
       try {
-        const response = await api.get('/favorites/ids');
+        const response = await api.get("/favorites/ids");
 
         this.favorites = response.data.data || [];
       } catch (error) {
-        console.error('Error loading favorites:', error);
+        console.error("Error loading favorites:", error);
       }
     },
 
     async getPublicApiData(page = 1) {
       if (page < 1 || (this.totalPages > 0 && page > this.totalPages)) return;
-      
+
       this.loadingData = true;
       try {
         // Usamos axios directamente para la API de Rick and Morty ya que es una API externa
-        const response = await axios.get(`https://rickandmortyapi.com/api/character?page=${page}`);
+        const response = await axios.get(
+          `https://rickandmortyapi.com/api/character?page=${page}`
+        );
         this.characters = response.data.results;
         this.page = page;
         this.inputPage = page;
         this.totalPages = response.data.info.pages;
 
-        this.characters = this.characters.map(character => ({
+        this.characters = this.characters.map((character) => ({
           ...character,
-          id: Number(character.id)
+          id: Number(character.id),
         }));
       } catch (error) {
-        console.error('Error fetching characters:', error);
+        console.error("Error fetching characters:", error);
       } finally {
         this.loadingData = false;
       }
     },
 
     goToPage() {
-      const page = Math.min(Math.max(1, parseInt(this.inputPage) || 1), this.totalPages);
+      const page = Math.min(
+        Math.max(1, parseInt(this.inputPage) || 1),
+        this.totalPages
+      );
       if (page !== this.page) {
         this.getPublicApiData(page);
       } else {
@@ -167,7 +180,7 @@ export default {
         image: character.image,
         description: character.species,
       };
-      this.isFavorite = this.favorites.includes(character.id)
+      this.isFavorite = this.favorites.includes(character.id);
       this.showConfirmationModal = true;
     },
 
@@ -175,62 +188,61 @@ export default {
       this.showConfirmationModal = false;
       this.selectedFavorite = {
         id: null,
-        name: '',
-        image: '',
+        name: "",
+        image: "",
       };
       this.isFavorite = false;
     },
 
     async addFavorite() {
       try {
-        await api.post(
-          '/favorite',
-          this.selectedFavorite
-        );
-        
+        await api.post("/favorite", this.selectedFavorite);
+
         // Actualizar el estado local de favoritos
         if (!this.favorites.includes(this.selectedFavorite.api_id)) {
           this.favorites.push(this.selectedFavorite.api_id);
           this.isFavorite = true;
         }
-        
+
         this.showConfirmationModal = false;
       } catch (error) {
-        console.error('Error adding favorite:', error);
-        alert('Error al agregar a favoritos');
+        console.error("Error adding favorite:", error);
+        alert("Error al agregar a favoritos");
       }
     },
 
     async deleteFavorite() {
       try {
-        // Primero obtenemos el ID del favorito para este personaje
-        const response = await api.get(`/favorite/character/${this.selectedFavorite.api_id}`);
-        const favoriteId = response.data.id;
-        
-        // Luego eliminamos el favorito
-        await api.delete(`/favorite/${favoriteId}`);
-        
+        // Eliminar favorito
+        await api({
+          method: "delete",
+          url: `/favorite/${this.selectedFavorite.api_id}`,
+          data: { api_id: this.selectedFavorite.api_id },
+        });
+
         // Actualizamos el estado local
-        this.favorites = this.favorites.filter(id => id !== this.selectedFavorite.api_id);
+        this.favorites = this.favorites.filter(
+          (id) => id !== this.selectedFavorite.api_id
+        );
         this.isFavorite = false;
-        
+
         this.showConfirmationModal = false;
       } catch (error) {
-        console.error('Error removing favorite:', error);
-        alert('Error al eliminar de favoritos');
+        console.error("Error removing favorite:", error);
+        alert("Error al eliminar de favoritos");
       }
+    },
+  },
+
+  async created() {
+    this.loadingData = true;
+    try {
+      await this.getPublicApiData(this.page);
+      await this.loadFavoriteIds();
+    } finally {
+      this.loadingData = false;
     }
   },
-  
-  async created() {
-    this.loadingData = true
-    try {
-      await this.getPublicApiData(this.page)
-      await this.loadFavoriteIds()
-    } finally {
-      this.loadingData = false
-    }
-  }
 };
 </script>
 
@@ -261,8 +273,14 @@ export default {
 }
 
 @keyframes modalFadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-icon {
@@ -358,12 +376,12 @@ export default {
     padding: 1.5rem;
     width: 85%;
   }
-  
+
   .modal-actions {
     flex-direction: column;
     gap: 0.75rem;
   }
-  
+
   .btn {
     width: 100%;
     padding: 0.8rem;
@@ -422,7 +440,9 @@ h1 {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Pagination */
@@ -497,8 +517,12 @@ h1 {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modal {
@@ -512,8 +536,14 @@ h1 {
 }
 
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .modal h3 {
@@ -569,12 +599,12 @@ h1 {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1.5rem;
   }
-  
+
   .pagination {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .page-input {
     order: -1;
     margin-bottom: 1rem;
@@ -585,26 +615,26 @@ h1 {
   .home {
     padding: 1rem;
   }
-  
+
   h1 {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
   }
-  
+
   .characters-grid {
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
   }
-  
+
   .modal {
     width: 90%;
     padding: 1.5rem;
   }
-  
+
   .modal-actions {
     flex-direction: column;
   }
-  
+
   .btn {
     width: 100%;
   }
